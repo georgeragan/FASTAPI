@@ -6,6 +6,8 @@ from pydantic import BaseModel
 
 app=FastAPI()
 
+model=pickle.load(open("insurance_model","rb"))
+
 class model_input(BaseModel):
     age:int
     sex:int
@@ -14,11 +16,9 @@ class model_input(BaseModel):
     smoker:int
     region: int
 
-model=pickle.load(open("insurance_model","rb"))
-
 @app.post("/insurance_prediction")#When a client sends a POST request to this URL with the required input data, the prediction function is executed.
 
-def prediction(input_parameters:model_input):
+def prediction(input_parameters):
     input_dict=input_parameters.dict()
     age=input_dict["age"]    
     sex=input_dict["sex"]
@@ -28,3 +28,6 @@ def prediction(input_parameters:model_input):
     region=input_dict["region"]
     predictions=model.predict([[age,sex,bmi,children,smoker,region]])
     return {"prediction":predictions}
+
+#TO RUN THE FILE:
+#uvicorn fastapp:app ie uvicorn filename without .py and app ie fastapi initialisation
